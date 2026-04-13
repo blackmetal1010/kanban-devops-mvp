@@ -1,0 +1,45 @@
+---
+- name: Backup Kanban DevOps MVP
+  hosts: webservers
+  become: true
+  vars:
+    app_dir: /opt/kanban-devops-mvp
+    backup_dir: /opt/kanban-devops-mvp/backups
+    remote_backup_enabled: false
+
+  tasks:
+    - name: Ensure backup directory exists
+      file:
+        path: "{{ backup_dir }}"
+        state: directory
+        mode: '0750'
+
+    - name: Run backup script
+      command: "{{ app_dir }}/scripts/backup.sh"
+      args:
+        chdir: "{{ app_dir }}"
+      environment:
+        BACKUP_DIR: "{{ backup_dir }}"
+      register: backup_result
+
+    - name: Show backup output
+      debug:
+        var: backup_result.stdout_lines
+
+    - name: List recent backups
+      find:
+        paths: "{{ backup_dir }}"
+        patterns: "*.tar.gz"
+        age: "-7d"
+      register: recent_backups
+
+    - name: Show recent backup count
+      debug:
+        msg: "{{ recent_backups.files | length }} backup(s) in the last 7 days."
+
+    - name: Upload backup to S3 (optional)
+      when: remote_backup_enabled | bool
+      command: >
+        aws s3 cp {{ backup_dir }}/{{ backup_result.stdout_lines[-1] }}
+        s3://{{ s3_bucket }}/kanban-backups/
+      ignore_errors: yes
