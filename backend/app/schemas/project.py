@@ -1,6 +1,13 @@
 from datetime import datetime
+from enum import Enum
 
 from pydantic import BaseModel, ConfigDict, Field
+
+
+class ProjectRole(str, Enum):
+    OWNER = "OWNER"
+    MEMBER = "MEMBER"
+    VIEWER = "VIEWER"
 
 
 class ProjectCreate(BaseModel):
@@ -27,3 +34,14 @@ class ProjectResponse(BaseModel):
 
 class ProjectListResponse(BaseModel):
     items: list[ProjectResponse]
+
+
+class ProjectMemberUpsertRequest(BaseModel):
+    user_id: int
+    role: ProjectRole
+
+
+class ProjectMemberResponse(BaseModel):
+    project_id: int
+    user_id: int
+    role: ProjectRole
