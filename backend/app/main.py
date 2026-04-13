@@ -5,7 +5,10 @@ from app.core.config import settings
 from app.db.base import Base
 from app.db.session import engine
 from app.routers.auth import router as auth_router
+from app.routers.projects import router as projects_router
 import app.models.user  # noqa: F401
+import app.models.project  # noqa: F401
+import app.models.project_member  # noqa: F401
 
 
 app = FastAPI(
@@ -40,6 +43,7 @@ def version() -> dict[str, str]:
 
 
 app.include_router(auth_router)
+app.include_router(projects_router)
 
 
 Instrumentator().instrument(app).expose(

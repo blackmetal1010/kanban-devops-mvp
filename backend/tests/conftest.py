@@ -1,6 +1,6 @@
 from collections.abc import Generator
 
-import app.models.user  # noqa: F401
+import app.models  # noqa: F401
 import pytest
 from fastapi.testclient import TestClient
 from sqlalchemy import create_engine
@@ -19,7 +19,8 @@ def client() -> Generator[TestClient, None, None]:
         connect_args={"check_same_thread": False},
         poolclass=StaticPool,
     )
-    TestingSessionLocal = sessionmaker(bind=engine, autocommit=False, autoflush=False)
+    TestingSessionLocal = sessionmaker(
+        bind=engine, autocommit=False, autoflush=False)
 
     Base.metadata.create_all(bind=engine)
 
