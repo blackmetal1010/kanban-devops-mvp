@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # Kanban DevOps MVP
 
 Base funcional del proyecto Kanban con enfoque DevOps para Ubuntu Server 22.04.
