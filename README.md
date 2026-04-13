@@ -22,11 +22,11 @@ Base funcional del proyecto Kanban con enfoque DevOps para Ubuntu Server 22.04.
 
  docker compose config
 
-2. Levanta todos los servicios:
+1. Levanta todos los servicios:
 
  docker compose up -d --build
 
-3. Comprueba estado:
+1. Comprueba estado:
 
  docker compose ps
 
@@ -63,4 +63,38 @@ Base funcional del proyecto Kanban con enfoque DevOps para Ubuntu Server 22.04.
 
 - Workflow GitHub Actions: `.github/workflows/ci.yml`
 - Ejecuta tests del backend en push y pull request contra main.
- 
+
+## Entrega continua (CD manual)
+
+- Workflow de despliegue: `.github/workflows/cd-manual.yml`
+- Trigger: manual (`workflow_dispatch`) y solo desde rama `main`.
+- Estrategia: sincroniza codigo por SSH al servidor y ejecuta `docker compose up -d --build`.
+
+Secrets requeridos en GitHub:
+
+- `DEPLOY_SSH_KEY`: clave privada SSH del usuario de despliegue.
+- `DEPLOY_HOST`: host/IP del servidor Ubuntu.
+- `DEPLOY_USER`: usuario SSH remoto.
+- `DEPLOY_PATH`: ruta absoluta del proyecto en el servidor remoto.
+
+## Migraciones de base de datos (Alembic)
+
+La API aplica migraciones al iniciar el contenedor (`alembic upgrade head`).
+
+Comandos utiles:
+
+1. Ejecutar migraciones manualmente:
+
+ docker compose exec -T api alembic upgrade head
+
+1. Ver revision actual:
+
+ docker compose exec -T api alembic current
+
+1. Crear una nueva migracion (cuando cambie el modelo):
+
+ docker compose exec -T api alembic revision --autogenerate -m "descripcion_cambio"
+
+1. Probar downgrade controlado:
+
+ docker compose exec -T api alembic downgrade -1
