@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # Kanban DevOps MVP
 
 Base funcional del proyecto Kanban con enfoque DevOps para Ubuntu Server 22.04.
@@ -21,23 +20,23 @@ Base funcional del proyecto Kanban con enfoque DevOps para Ubuntu Server 22.04.
 
 1. Verifica la configuracion de Compose:
 
-	docker compose config
+ docker compose config
 
 2. Levanta todos los servicios:
 
-	docker compose up -d --build
+ docker compose up -d --build
 
 3. Comprueba estado:
 
-	docker compose ps
+ docker compose ps
 
 ## URLs
 
-- Frontend: http://localhost:8080
-- API docs: http://localhost:8000/docs
-- API health: http://localhost:8000/health
-- Prometheus: http://localhost:9090
-- Grafana: http://localhost:3000
+- Frontend: <http://localhost:8080>
+- API docs: <http://localhost:8000/docs>
+- API health: <http://localhost:8000/health>
+- Prometheus: <http://localhost:9090>
+- Grafana: <http://localhost:3000>
 
 ## Credenciales iniciales
 
@@ -50,7 +49,3 @@ Base funcional del proyecto Kanban con enfoque DevOps para Ubuntu Server 22.04.
 - Crear migraciones con Alembic.
 - Añadir endpoints RF-1 a RF-6.
 - Integrar tests y pipeline CI/CD en GitLab.
-=======
-# kanban-devops-mvp
-Mi kanban-devops-mvp
->>>>>>> 035961e7f4d4c36ed083be886378bb31f1a30a7c
