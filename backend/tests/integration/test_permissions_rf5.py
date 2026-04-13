@@ -5,10 +5,10 @@ BASE_AUTH = "/api/auth"
 BASE_PROJECTS = "/api/projects"
 
 
-def _register_and_login(client: TestClient, email: str, full_name: str, password: str) -> str:
+def _register_and_login(client: TestClient, email: str, username: str, password: str) -> str:
     register_payload = {
         "email": email,
-        "full_name": full_name,
+        "username": username,
         "password": password,
     }
     reg = client.post(f"{BASE_AUTH}/register", json=register_payload)
