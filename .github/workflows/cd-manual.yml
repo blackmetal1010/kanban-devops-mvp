@@ -43,12 +43,17 @@ jobs:
              TS=\$(date +%Y%m%d_%H%M%S) && \
              docker compose exec -T db sh -lc 'pg_dump -U \"\$POSTGRES_USER\" \"\$POSTGRES_DB\"' > backups/deploy/predeploy_\$TS.sql"
 
-      - name: Deploy stack
+      - name: Deploy stack (production profile)
         run: |
           ssh "${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }}" \
-            "cd '${{ secrets.DEPLOY_PATH }}' && docker compose config && docker compose up -d --build"
+            "cd '${{ secrets.DEPLOY_PATH }}' && ./scripts/preflight_production.sh && docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d --build"
 
       - name: Post-deploy smoke check
         run: |
           ssh "${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }}" \
             "cd '${{ secrets.DEPLOY_PATH }}' && ./scripts/smoke_check.sh"
+
+      - name: Backup retention policy
+        run: |
+          ssh "${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }}" \
+            "cd '${{ secrets.DEPLOY_PATH }}' && KEEP_COUNT=14 ./scripts/backup_retention.sh"

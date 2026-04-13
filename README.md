@@ -64,6 +64,7 @@ Base funcional del proyecto Kanban con enfoque DevOps para Ubuntu Server 22.04.
 - Workflow GitHub Actions: `.github/workflows/ci.yml`
 - Ejecuta tests del backend en push y pull request contra main.
 - Incluye job adicional de migraciones: `alembic upgrade/downgrade/upgrade` sobre PostgreSQL real.
+- Incluye chequeo de seguridad de configuracion (`config-safety-check`) sobre `.env.example`.
 
 ## Entrega continua (CD manual)
 
@@ -73,6 +74,7 @@ Base funcional del proyecto Kanban con enfoque DevOps para Ubuntu Server 22.04.
 - Estrategia: sincroniza codigo por SSH al servidor, crea backup predeploy de PostgreSQL y ejecuta `docker compose up -d --build`.
 - Nota de seguridad: el workflow excluye `.env` en `rsync` para no sobreescribir secretos remotos.
 - Validacion postdeploy: ejecuta `./scripts/smoke_check.sh` remoto (servicios, health, version, docs, metrics).
+- Perfil de produccion: usa `docker-compose.prod.yml` para endurecer exposicion de puertos internos.
 
 Secrets requeridos en GitHub:
 
@@ -88,6 +90,21 @@ Scripts incluidos:
 - `scripts/backup_postgres.sh`: genera backup SQL en `backups/manual/`.
 - `scripts/restore_postgres.sh <ruta_backup.sql>`: restaura backup SQL en la BD activa.
 - `scripts/smoke_check.sh`: valida estado de servicios y endpoints clave tras despliegue.
+- `scripts/preflight_production.sh`: verifica secretos, APP_ENV y compose de produccion antes de desplegar.
+- `scripts/backup_retention.sh`: aplica politica de retencion de backups SQL.
+- `scripts/deploy_production.sh`: flujo integral (preflight + backup + deploy prod + smoke + retencion).
+
+## Perfil de produccion
+
+- Archivo: `docker-compose.prod.yml`
+- Cambios de hardening aplicados:
+  - `db` y `redis` sin puertos publicados.
+  - `prometheus` y `grafana` ligados a `127.0.0.1`.
+  - `APP_ENV=prod` para API en despliegue final.
+
+## Checklist final de salida a produccion
+
+- Ver `docs/GO_LIVE_CHECKLIST.md`.
 
 Uso recomendado:
 

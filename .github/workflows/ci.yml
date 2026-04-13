@@ -10,6 +10,21 @@ on:
       - main
 
 jobs:
+  config-safety-check:
+    name: Config Safety Check
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Validate .env.example does not contain placeholders
+        run: |
+          if grep -E 'change_me' .env.example; then
+            echo "Found insecure placeholder in .env.example"
+            exit 1
+          fi
+
   backend-tests:
     name: Backend Tests (Python 3.11)
     runs-on: ubuntu-latest
