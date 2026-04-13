@@ -2,8 +2,6 @@ from fastapi import FastAPI
 from prometheus_fastapi_instrumentator import Instrumentator
 
 from app.core.config import settings
-from app.db.base import Base
-from app.db.session import engine
 from app.routers.auth import router as auth_router
 from app.routers.comments import router as comments_router
 from app.routers.projects import router as projects_router
@@ -20,11 +18,6 @@ app = FastAPI(
     version=settings.APP_VERSION,
     description="API base para el proyecto Kanban DevOps",
 )
-
-
-@app.on_event("startup")
-def startup() -> None:
-    Base.metadata.create_all(bind=engine)
 
 
 @app.get("/")

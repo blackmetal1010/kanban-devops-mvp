@@ -45,3 +45,12 @@ class ProjectMemberResponse(BaseModel):
     project_id: int
     user_id: int
     role: ProjectRole
+
+
+class ProjectStatsResponse(BaseModel):
+    project_id: int
+    total: int
+    todo: int
+    in_progress: int
+    done: int
+    pct_complete: float
