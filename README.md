@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Kanban DevOps MVP
 
 Base funcional del proyecto Kanban con enfoque DevOps para Ubuntu Server 22.04.
@@ -49,3 +50,7 @@ Base funcional del proyecto Kanban con enfoque DevOps para Ubuntu Server 22.04.
 - Crear migraciones con Alembic.
 - Añadir endpoints RF-1 a RF-6.
 - Integrar tests y pipeline CI/CD en GitLab.
+=======
+# kanban-devops-mvp
+Mi kanban-devops-mvp
+>>>>>>> 035961e7f4d4c36ed083be886378bb31f1a30a7c
