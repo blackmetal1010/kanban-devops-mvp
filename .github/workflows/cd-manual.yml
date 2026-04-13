@@ -2,14 +2,6 @@ name: CD Manual Deploy
 
 on:
   workflow_dispatch:
-    inputs:
-      environment:
-        description: "Target environment"
-        required: true
-        default: "production"
-        type: choice
-        options:
-          - production
 
 concurrency:
   group: deploy-${{ github.ref }}
@@ -41,14 +33,22 @@ jobs:
             --exclude '.git' \
             --exclude '__pycache__' \
             --exclude '.pytest_cache' \
+            --exclude '.env' \
             ./ "${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }}:${{ secrets.DEPLOY_PATH }}"
+
+      - name: Pre-deploy database backup
+        run: |
+          ssh "${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }}" \
+            "cd '${{ secrets.DEPLOY_PATH }}' && mkdir -p backups/deploy && \
+             TS=\$(date +%Y%m%d_%H%M%S) && \
+             docker compose exec -T db sh -lc 'pg_dump -U \"\$POSTGRES_USER\" \"\$POSTGRES_DB\"' > backups/deploy/predeploy_\$TS.sql"
 
       - name: Deploy stack
         run: |
           ssh "${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }}" \
-            "cd '${{ secrets.DEPLOY_PATH }}' && docker compose up -d --build"
+            "cd '${{ secrets.DEPLOY_PATH }}' && docker compose config && docker compose up -d --build"
 
       - name: Healthcheck API
         run: |
           ssh "${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }}" \
-            "curl -fsS http://localhost:8000/health"
+            "curl -fsS http://localhost:8000/health && curl -fsS http://localhost:8000/version"

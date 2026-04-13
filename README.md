@@ -68,7 +68,9 @@ Base funcional del proyecto Kanban con enfoque DevOps para Ubuntu Server 22.04.
 
 - Workflow de despliegue: `.github/workflows/cd-manual.yml`
 - Trigger: manual (`workflow_dispatch`) y solo desde rama `main`.
-- Estrategia: sincroniza codigo por SSH al servidor y ejecuta `docker compose up -d --build`.
+- Escenario objetivo: servidor unico Ubuntu Server 22.04 (produccion unica).
+- Estrategia: sincroniza codigo por SSH al servidor, crea backup predeploy de PostgreSQL y ejecuta `docker compose up -d --build`.
+- Nota de seguridad: el workflow excluye `.env` en `rsync` para no sobreescribir secretos remotos.
 
 Secrets requeridos en GitHub:
 
@@ -76,6 +78,23 @@ Secrets requeridos en GitHub:
 - `DEPLOY_HOST`: host/IP del servidor Ubuntu.
 - `DEPLOY_USER`: usuario SSH remoto.
 - `DEPLOY_PATH`: ruta absoluta del proyecto en el servidor remoto.
+
+## Backup y restauracion (produccion)
+
+Scripts incluidos:
+
+- `scripts/backup_postgres.sh`: genera backup SQL en `backups/manual/`.
+- `scripts/restore_postgres.sh <ruta_backup.sql>`: restaura backup SQL en la BD activa.
+
+Uso recomendado:
+
+1. Crear backup manual antes de cambios grandes:
+
+ ./scripts/backup_postgres.sh
+
+1. Restaurar en caso de rollback de datos:
+
+ ./scripts/restore_postgres.sh backups/manual/postgres_YYYYmmdd_HHMMSS.sql
 
 ## Migraciones de base de datos (Alembic)
 
