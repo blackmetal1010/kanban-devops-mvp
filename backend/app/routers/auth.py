@@ -3,7 +3,7 @@ from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
 from app.database import get_db
 from app.models.user import User
-from app.schemas.user import Token, UserResponse
+from app.schemas.user import Token, UserCreate, UserResponse
 from app.core.security import verify_password, create_access_token, get_password_hash
 from app.core.deps import get_current_user
 
@@ -34,22 +34,20 @@ def get_me(current_user: User = Depends(get_current_user)):
 
 @router.post("/register", response_model=UserResponse, status_code=status.HTTP_201_CREATED)
 def register(
-    username: str,
-    email: str,
-    password: str,
+    user_in: UserCreate,
     db: Session = Depends(get_db),
 ):
-    if db.query(User).filter(User.username == username).first():
+    if db.query(User).filter(User.username == user_in.username).first():
         raise HTTPException(status_code=400, detail="Username already registered")
-    if db.query(User).filter(User.email == email).first():
+    if db.query(User).filter(User.email == user_in.email).first():
         raise HTTPException(status_code=400, detail="Email already registered")
 
     # First registered user becomes admin
     is_first_user = db.query(User).count() == 0
     user = User(
-        username=username,
-        email=email,
-        hashed_password=get_password_hash(password),
+        username=user_in.username,
+        email=user_in.email,
+        hashed_password=get_password_hash(user_in.password),
         role="admin" if is_first_user else "member",
     )
     db.add(user)

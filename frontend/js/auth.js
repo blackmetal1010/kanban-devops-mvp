@@ -55,8 +55,11 @@ const Auth = (() => {
   }
 
   async function register(username, email, password) {
-    const params = new URLSearchParams({ username, email, password });
-    const res = await fetch(`/api/auth/register?${params}`, { method: 'POST' });
+    const res = await fetch('/api/auth/register', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ username, email, password }),
+    });
     if (!res.ok) {
       const data = await res.json().catch(() => ({}));
       throw new Error(data.detail || `HTTP ${res.status}`);

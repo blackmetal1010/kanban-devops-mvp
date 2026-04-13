@@ -48,7 +48,7 @@ class TestAuth:
     def test_register(self, client):
         response = client.post(
             "/api/auth/register",
-            params={"username": "newuser", "email": "new@example.com", "password": "newpass123"},
+            json={"username": "newuser", "email": "new@example.com", "password": "newpass123"},
         )
         assert response.status_code == 201
         assert response.json()["username"] == "newuser"
@@ -56,7 +56,7 @@ class TestAuth:
     def test_register_duplicate_username(self, client, admin_user):
         response = client.post(
             "/api/auth/register",
-            params={"username": "admin", "email": "other@example.com", "password": "pass"},
+            json={"username": "admin", "email": "other@example.com", "password": "pass"},
         )
         assert response.status_code == 400
 

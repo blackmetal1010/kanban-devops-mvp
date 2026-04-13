@@ -45,7 +45,7 @@ echo "[backup] Size: $(du -sh "${BACKUP_DIR}/${BACKUP_NAME}.tar.gz" | cut -f1)"
 
 # ── Rotate old backups ────────────────────────────────────────────────────────
 echo "[backup] Removing backups older than ${KEEP_DAYS} days..."
-find "${BACKUP_DIR}" -name "kanban_backup_*.tar.gz" -mtime "+${KEEP_DAYS}" -delete
+find "${BACKUP_DIR}" -name "kanban_backup_*.tar.gz" -mtime +${KEEP_DAYS} -delete
 
 REMAINING=$(find "${BACKUP_DIR}" -name "kanban_backup_*.tar.gz" | wc -l)
 echo "[backup] Done. ${REMAINING} backup(s) retained."

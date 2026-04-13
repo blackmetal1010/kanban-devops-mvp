@@ -155,4 +155,3 @@ ansible-playbook ansible/playbooks/deploy.yml
 ## License
 
 MIT
-Mi kanban-devops-mvp
