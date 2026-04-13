@@ -36,3 +36,7 @@ class TaskResponse(BaseModel):
     is_deleted: bool
     created_at: datetime
     updated_at: datetime
+
+
+class TaskAssignRequest(BaseModel):
+    assigned_to: int
