@@ -49,3 +49,4 @@ Base funcional del proyecto Kanban con enfoque DevOps para Ubuntu Server 22.04.
 - Crear migraciones con Alembic.
 - Añadir endpoints RF-1 a RF-6.
 - Integrar tests y pipeline CI/CD en GitLab.
+ 
