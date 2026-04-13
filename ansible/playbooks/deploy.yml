@@ -1,0 +1,50 @@
+---
+- name: Deploy Kanban DevOps MVP
+  hosts: webservers
+  become: true
+  vars:
+    app_dir: /opt/kanban-devops-mvp
+    repo_url: "{{ lookup('env', 'CI_REPOSITORY_URL') | default('https://github.com/example/kanban-devops-mvp.git', true) }}"
+    docker_image: "{{ lookup('env', 'docker_image') | default('kanban-backend:latest', true) }}"
+
+  tasks:
+    - name: Pull latest code
+      git:
+        repo: "{{ repo_url }}"
+        dest: "{{ app_dir }}"
+        version: main
+        force: yes
+      become_user: ubuntu
+
+    - name: Copy .env file if not exists
+      copy:
+        src: "{{ app_dir }}/.env.example"
+        dest: "{{ app_dir }}/.env"
+        remote_src: yes
+        force: no
+
+    - name: Pull latest Docker images
+      community.docker.docker_compose:
+        project_src: "{{ app_dir }}"
+        pull: yes
+      ignore_errors: yes
+
+    - name: Deploy with Docker Compose
+      community.docker.docker_compose:
+        project_src: "{{ app_dir }}"
+        state: present
+        restarted: yes
+        remove_orphans: yes
+
+    - name: Wait for backend to be healthy
+      uri:
+        url: http://localhost/health
+        status_code: 200
+      register: health
+      retries: 10
+      delay: 5
+      until: health.status == 200
+
+    - name: Deployment complete
+      debug:
+        msg: "Deployment successful. Backend is healthy."

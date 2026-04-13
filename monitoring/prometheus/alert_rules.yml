@@ -1,0 +1,44 @@
+groups:
+  - name: kanban_alerts
+    rules:
+      - alert: BackendDown
+        expr: up{job="kanban-backend"} == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Kanban backend is down"
+          description: "The kanban backend has been unreachable for more than 1 minute."
+
+      - alert: HighErrorRate
+        expr: |
+          sum(rate(http_requests_total{job="kanban-backend", status=~"5.."}[5m]))
+          /
+          sum(rate(http_requests_total{job="kanban-backend"}[5m])) > 0.05
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High HTTP error rate"
+          description: "More than 5% of requests are returning 5xx errors."
+
+      - alert: HighLatency
+        expr: |
+          histogram_quantile(0.95,
+            sum(rate(http_request_duration_seconds_bucket{job="kanban-backend"}[5m])) by (le)
+          ) > 1.0
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High API latency"
+          description: "95th percentile response time exceeds 1 second."
+
+      - alert: PrometheusDown
+        expr: up{job="prometheus"} == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Prometheus is down"
+          description: "Prometheus scrape target is unreachable."
