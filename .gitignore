@@ -54,5 +54,9 @@ backups/
 *.sql.gz
 *.tar.gz
 
+# SQLite test databases
+*.db
+*.sqlite
+
 # Alembic
 # (keep versions tracked)

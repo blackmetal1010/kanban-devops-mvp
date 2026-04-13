@@ -44,6 +44,9 @@ volumes:
 networks:
   kanban_net:
     external: true
-    name: kanban-devops-mvp_kanban_net
+    # Default name assumes the main stack was started from the project root directory.
+    # If you use a custom COMPOSE_PROJECT_NAME, update this value accordingly:
+    #   COMPOSE_PROJECT_NAME=myproject → name: myproject_kanban_net
+    name: ${COMPOSE_PROJECT_NAME:-kanban-devops-mvp}_kanban_net
   monitoring_net:
     driver: bridge

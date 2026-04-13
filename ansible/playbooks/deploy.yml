@@ -1,4 +1,8 @@
 ---
+# Deploy playbook for Kanban DevOps MVP.
+# Required variables (set via CI/CD environment or --extra-vars):
+#   CI_REPOSITORY_URL : Git repository URL to clone/pull (e.g. https://github.com/org/kanban-devops-mvp.git)
+#   docker_image      : Backend Docker image tag to deploy (e.g. registry.example.com/org/backend:sha)
 - name: Deploy Kanban DevOps MVP
   hosts: webservers
   become: true

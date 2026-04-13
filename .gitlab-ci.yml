@@ -22,7 +22,7 @@ test:backend:
   before_script:
     - cd backend && pip install -r requirements.txt
   script:
-    - pytest app/tests/ -v --tb=short
+    - pytest app/tests/ -v --tb=short --cov=app --cov-report=xml:coverage.xml --cov-report=term-missing
   coverage: '/TOTAL.*\s+(\d+%)$/'
   artifacts:
     reports:
