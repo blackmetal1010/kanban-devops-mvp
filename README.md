@@ -63,6 +63,7 @@ Base funcional del proyecto Kanban con enfoque DevOps para Ubuntu Server 22.04.
 
 - Workflow GitHub Actions: `.github/workflows/ci.yml`
 - Ejecuta tests del backend en push y pull request contra main.
+- Incluye job adicional de migraciones: `alembic upgrade/downgrade/upgrade` sobre PostgreSQL real.
 
 ## Entrega continua (CD manual)
 
@@ -71,6 +72,7 @@ Base funcional del proyecto Kanban con enfoque DevOps para Ubuntu Server 22.04.
 - Escenario objetivo: servidor unico Ubuntu Server 22.04 (produccion unica).
 - Estrategia: sincroniza codigo por SSH al servidor, crea backup predeploy de PostgreSQL y ejecuta `docker compose up -d --build`.
 - Nota de seguridad: el workflow excluye `.env` en `rsync` para no sobreescribir secretos remotos.
+- Validacion postdeploy: ejecuta `./scripts/smoke_check.sh` remoto (servicios, health, version, docs, metrics).
 
 Secrets requeridos en GitHub:
 
@@ -85,6 +87,7 @@ Scripts incluidos:
 
 - `scripts/backup_postgres.sh`: genera backup SQL en `backups/manual/`.
 - `scripts/restore_postgres.sh <ruta_backup.sql>`: restaura backup SQL en la BD activa.
+- `scripts/smoke_check.sh`: valida estado de servicios y endpoints clave tras despliegue.
 
 Uso recomendado:
 

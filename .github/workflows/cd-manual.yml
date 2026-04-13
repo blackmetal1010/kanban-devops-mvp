@@ -48,7 +48,7 @@ jobs:
           ssh "${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }}" \
             "cd '${{ secrets.DEPLOY_PATH }}' && docker compose config && docker compose up -d --build"
 
-      - name: Healthcheck API
+      - name: Post-deploy smoke check
         run: |
           ssh "${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }}" \
-            "curl -fsS http://localhost:8000/health && curl -fsS http://localhost:8000/version"
+            "cd '${{ secrets.DEPLOY_PATH }}' && ./scripts/smoke_check.sh"

@@ -33,3 +33,52 @@ jobs:
         working-directory: backend
         run: |
           PYTHONPATH=. pytest -q
+
+  migration-check:
+    name: Alembic Migration Check (PostgreSQL)
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:15-alpine
+        env:
+          POSTGRES_DB: kanban_db
+          POSTGRES_USER: app_user
+          POSTGRES_PASSWORD: ci_password
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U app_user -d kanban_db"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    env:
+      DATABASE_URL: postgresql+psycopg://app_user:ci_password@localhost:5432/kanban_db
+      POSTGRES_DB: kanban_db
+      POSTGRES_USER: app_user
+      POSTGRES_PASSWORD: ci_password
+      REDIS_URL: redis://localhost:6379/0
+      JWT_SECRET: ci_jwt_secret
+      APP_ENV: ci
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install backend dependencies
+        working-directory: backend
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run alembic upgrade/downgrade cycle
+        working-directory: backend
+        run: |
+          PYTHONPATH=. alembic upgrade head
+          PYTHONPATH=. alembic downgrade -1
+          PYTHONPATH=. alembic upgrade head
