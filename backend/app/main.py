@@ -1,3 +1,5 @@
+from contextlib import asynccontextmanager
+
 from fastapi import FastAPI
 from prometheus_fastapi_instrumentator import Instrumentator
 
@@ -7,22 +9,26 @@ from app.db.session import engine
 from app.routers.auth import router as auth_router
 from app.routers.projects import router as projects_router
 from app.routers.tasks import router as tasks_router
+from app.routers.comments import router as comments_router
 import app.models.user  # noqa: F401
 import app.models.project  # noqa: F401
 import app.models.project_member  # noqa: F401
 import app.models.task  # noqa: F401
+import app.models.comment  # noqa: F401
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    Base.metadata.create_all(bind=engine)
+    yield
 
 
 app = FastAPI(
     title="Kanban DevOps API",
     version=settings.APP_VERSION,
     description="API base para el proyecto Kanban DevOps",
+    lifespan=lifespan,
 )
-
-
-@app.on_event("startup")
-def startup() -> None:
-    Base.metadata.create_all(bind=engine)
 
 
 @app.get("/")
@@ -47,6 +53,7 @@ def version() -> dict[str, str]:
 app.include_router(auth_router)
 app.include_router(projects_router)
 app.include_router(tasks_router)
+app.include_router(comments_router)
 
 
 Instrumentator().instrument(app).expose(
