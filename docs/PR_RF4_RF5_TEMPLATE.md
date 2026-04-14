@@ -2,7 +2,7 @@
 
 Base: `main`
 Head: `feature/rf4-rf5-estabilizacion`
-Compare: https://github.com/blackmetal1010/kanban-devops-mvp/compare/main...feature/rf4-rf5-estabilizacion?expand=1
+Compare: <https://github.com/blackmetal1010/kanban-devops-mvp/compare/main...feature/rf4-rf5-estabilizacion?expand=1>
 
 ## Resumen Ejecutivo
 
