@@ -3,6 +3,24 @@ set -euo pipefail
 
 API_URL="${API_URL:-http://localhost:8000}"
 
+wait_for_url() {
+  local label="$1"
+  local url="$2"
+  local attempts="${3:-20}"
+  local delay="${4:-2}"
+
+  echo "[smoke] Validando ${label}"
+  for _ in $(seq 1 "$attempts"); do
+    if curl -fsS --max-time 5 "$url" >/dev/null; then
+      return 0
+    fi
+    sleep "$delay"
+  done
+
+  echo "[smoke] Fallo validando ${label}: ${url}"
+  return 1
+}
+
 for svc in api db redis frontend prometheus grafana; do
   if ! docker compose ps --status running "$svc" | grep -q "$svc"; then
     echo "[smoke] Servicio no esta running: $svc"
@@ -10,16 +28,9 @@ for svc in api db redis frontend prometheus grafana; do
   fi
 done
 
-echo "[smoke] Validando API health"
-curl -fsS "$API_URL/health" >/dev/null
-
-echo "[smoke] Validando API version"
-curl -fsS "$API_URL/version" >/dev/null
-
-echo "[smoke] Validando OpenAPI"
-curl -fsS "$API_URL/docs" >/dev/null
-
-echo "[smoke] Validando metricas"
-curl -fsS "$API_URL/metrics" >/dev/null
+wait_for_url "API health" "$API_URL/health" 30 2
+wait_for_url "API version" "$API_URL/version"
+wait_for_url "OpenAPI" "$API_URL/docs"
+wait_for_url "metricas" "$API_URL/metrics"
 
 echo "[smoke] OK"
