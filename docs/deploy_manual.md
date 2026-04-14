@@ -117,9 +117,7 @@ docker compose -f docker-compose.yml -f docker-compose.prod.yml ps
 Comprobar API:
 
 ```bash
-
 curl http://localhost:8000/health 
-
 ```
 
 Comprobar Prometheus:
