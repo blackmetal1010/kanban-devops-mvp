@@ -3,6 +3,7 @@
 ## 1. Workflow utilizado
 
 - GitHub Actions → workflow: **CD Manual Deploy**  
+
 - Rama permitida: **`main`** (solo se despliega código ya fusionado en producción).
 
 ## 2. Secrets necesarios
