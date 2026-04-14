@@ -18,6 +18,7 @@ Objetivo: demostrar valor funcional y DevOps de extremo a extremo.
 Mensaje sugerido:
 
 - Este proyecto implementa un Kanban con backend FastAPI y enfoque DevOps.
+
 - Incluye CI, CD manual, migraciones, monitorizacion, backup y smoke checks.
 
 ## 2. Estado de plataforma (2 minutos)
@@ -122,13 +123,17 @@ Mensaje sugerido:
 ## 7. Preguntas tipicas de tutores y respuesta corta
 
 1. Por que CD manual y no automatico total
+
 - Por control pedagogico y seguridad en produccion unica.
 
-2. Que pasa si falla un deploy
+1. Que pasa si falla un deploy
+
 - Existe backup predeploy y scripts de recuperacion.
 
-3. Como garantizas cambios de esquema
+1. Como garantizas cambios de esquema
+
 - Alembic gestiona migraciones versionadas.
 
-4. Como pruebas permisos
+1. Como pruebas permisos
+
 - Tests de integracion y validaciones por rol.
