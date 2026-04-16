@@ -41,6 +41,7 @@ jobs:
             --exclude '__pycache__' \
             --exclude '.pytest_cache' \
             --exclude '.env' \
+            --exclude 'backups/' \
             ./ "${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }}:${{ secrets.DEPLOY_PATH }}"
 
       - name: Pre-deploy database backup
